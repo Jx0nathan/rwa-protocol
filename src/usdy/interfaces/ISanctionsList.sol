@@ -3,19 +3,19 @@ pragma solidity ^0.8.20;
 
 /**
  * @title ISanctionsList
- * @notice Chainalysis 链上制裁名单接口
+ * @notice Chainalysis 制裁名单预言机的接口
  *
- * 真实地址（以太坊主网）：0x40C57923924B5c5c5455c48D93317139ADDaC8fb
- * 这是 OFAC SDN 制裁名单的链上镜像，由 Chainalysis 维护。
+ * 这个接口对应的合约不是我们写的，而是 Chainalysis 公司部署在以太坊主网上的：
+ * https://etherscan.io/address/0x40C57923924B5c5c5455c48D93317139ADDaC8fb
  *
- * Ondo 在 USDY transfer 时实时调用此接口，被制裁地址无法收发 token。
- * 参考：Ondo SanctionsList.sol
+ * 和 IBlocklist 的区别：
+ * - IBlocklist：有 add/remove/isBlocked → 我们自己管理
+ * - ISanctionsList：只有 isSanctioned → 我们只能查询，不能修改
+ *
+ * Chainalysis 维护一份全球制裁名单（OFAC SDN List 等），
+ * 任何被美国财政部制裁的地址都会出现在这里。
+ * 我们的合约只需要调用 isSanctioned() 检查即可。
  */
 interface ISanctionsList {
-  /**
-   * @notice 检查某地址是否在 OFAC 制裁名单中
-   * @param addr 待检查地址
-   * @return true = 被制裁，应拒绝交易
-   */
-  function isSanctioned(address addr) external view returns (bool);
-}
+   function isSanctioned(address addr) external view returns(bool);
+}    
